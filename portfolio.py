@@ -2,6 +2,8 @@
 import os,time
 from selenium import webdriver
 from datetime import datetime
+from datetime import timedelta
+from PIL import Image
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 chromedriver = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'chromedriver.exe')
 os.environ["webdriver.chrome.driver"] = chromedriver
@@ -26,6 +28,21 @@ time.sleep(1)
 #Save portfolio
 portfolio = driver.find_element_by_xpath('//*[@id="equity"]/div[3]/div/div[1]').screenshot_as_png
 filename =os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Portfolio on '+str(datetime.today().date())+'.png')
+driver.get("https://secure.icicidirect.com/customer/logout")
 driver.quit()
 with open(filename, "wb") as file:
   file.write(portfolio)
+
+#To remove previous day's image
+oldPath=os.path.join(os.path.dirname(os.path.realpath(__file__)), 'Portfolio on '+str((datetime.today()-timedelta(days=1)).date())+'.png')
+if os.path.exists(oldPath):
+  os.remove(oldPath)
+else:
+  pass
+
+#To open the image and display it
+try:
+    img = Image.open(portfolioPath)
+    img.show()
+except Exception as e:
+    print("Issue opening image: ",e)
